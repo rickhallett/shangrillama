@@ -11,3 +11,247 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* index.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+
+.App {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  min-height: 100vh;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+}
+
+.question-display {
+  margin-bottom: 20px;
+}
+
+.question-display h2 {
+  color: #2c3e50;
+  font-size: 1.2em;
+}
+
+.answer-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.answer-button {
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.answer-button:hover {
+  background-color: #2980b9;
+}
+
+.answer-text-input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.submit-button {
+  padding: 10px;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #27ae60;
+}
+
+/* index.css */
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'VT323', monospace;
+  background-color: #0C0C0C;
+  color: #00FF00;
+  line-height: 1.6;
+}
+
+.App {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #000000;
+  border: 2px solid #00FF00;
+  box-shadow: 0 0 10px #00FF00, inset 0 0 10px #00FF00;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+h1, h2, h3 {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.question-display {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #0C0C0C;
+  border: 1px solid #00FF00;
+  border-radius: 5px;
+}
+
+.answer-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.answer-button, .submit-button, .style-buttons button {
+  padding: 10px 15px;
+  background-color: #0C0C0C;
+  color: #00FF00;
+  border: 1px solid #00FF00;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+}
+
+.answer-button:hover, .submit-button:hover, .style-buttons button:hover {
+  background-color: #00FF00;
+  color: #000000;
+}
+
+.answer-text-input {
+  padding: 10px;
+  background-color: #0C0C0C;
+  color: #00FF00;
+  border: 1px solid #00FF00;
+  border-radius: 5px;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+}
+
+.results {
+  background-color: #0C0C0C;
+  border: 1px solid #00FF00;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.compatibility-score {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.compatibility-score .score {
+  font-size: 48px;
+  color: #00FF00;
+  font-weight: bold;
+}
+
+.assessment-section {
+  margin-top: 20px;
+}
+
+.assessment-section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.assessment-section li {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #0C0C0C;
+  border: 1px solid #00FF00;
+  border-radius: 5px;
+}
+
+.assessment-section li::before {
+  content: '> ';
+  color: #00FF00;
+}
+
+.error {
+  color: #FF0000;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Add a CRT screen effect */
+@keyframes flicker {
+  0% { opacity: 0.9; }
+  5% { opacity: 0.8; }
+  10% { opacity: 0.9; }
+  15% { opacity: 0.8; }
+  20% { opacity: 1; }
+}
+
+.App::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+/* Add some scan lines */
+.App::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+/* Style adjustments for better readability */
+.question-count {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.style-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
