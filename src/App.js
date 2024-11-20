@@ -78,7 +78,7 @@ function App() {
   if (!quizStarted && !style) {
     return (
       <div className="App">
-        <h1>52 Sami Pick Up</h1>
+        <h1>You have but one chance, Ellie</h1>
         <h2>Choose your preferred style:</h2>
         <div className="style-buttons">
           {['formal', 'funny', 'flirty', 'outrageous'].map(s => (
