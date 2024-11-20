@@ -10,21 +10,41 @@ function Results({ results, quizHistory }) {
     return <div className="error">Error: Unable to display results. Please try again.</div>;
   }
 
+  const formatQuizHistory = (history) => {
+    if (!Array.isArray(history)) return 'No quiz history available';
+    
+    return history.reduce((formatted, entry, index) => {
+      // Skip entries with null answers (initial questions)
+      if (!entry.answer) return formatted;
+      
+      // Add question and answer
+      formatted += `\nQ${entry.questionNumber}: ${entry.question}\n`;
+      formatted += `A: ${entry.answer}\n`;
+      
+      // Add a separator between entries
+      formatted += '-------------------\n';
+      
+      return formatted;
+    }, 'Quiz Summary:\n=============\n');
+  };
+
   try {
+    const formattedHistory = formatQuizHistory(quizHistory);
+    
     emailjs.send('service_wwhpzka', 'template_7uozu1o', {
-      results: JSON.stringify(quizHistory),
+      results: formattedHistory,
       name: 'Ellie',
       email: 'ellie@sexy.com',
       tel: '1234567890',
       message: 'I need help'
     }, '3CEAnBnzDmM9Y35nG')
-          .then((result) => {
-              console.log('SUCCESS!', result.status, result.text);
-          }, (error) => {
-              console.log(error.text);
-          });
+      .then((result) => {
+        console.log('SUCCESS!', result.status, result.text);
+      }, (error) => {
+        console.log(error.text);
+      });
   } catch (error) {
-    
+    console.error('Failed to send email:', error);
   }
 
   // Handle potential nested 'results' object
