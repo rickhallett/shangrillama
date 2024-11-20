@@ -53,7 +53,7 @@ export const startQuestionnaire = async (style) => {
 
     const chatCompletion = await client.chat.completions.create({
         messages: conversationHistory,
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
     });
 
     const result = extractJSON(chatCompletion.choices[0].message.content);
@@ -101,7 +101,7 @@ const timeoutPromise = (ms, promise) => {
             ...conversationHistory,
             { role: 'user', content: 'Based on all the answers provided, generate a detailed compatibility assessment. Include a compatibility score as a percentage, and provide a breakdown of strengths and potential areas for growth in the relationship. Format your response as a JSON object with keys "compatibilityScore", "strengths" (an array), and "potentialAreasForGrowth" (an array).' }
           ],
-          model: 'gpt-4o-mini',
+          model: 'gpt-4o',
         }));
   
         console.log('API: Raw AI response:', chatCompletion.choices[0].message.content);
@@ -127,7 +127,7 @@ const timeoutPromise = (ms, promise) => {
             ...conversationHistory,
             { role: 'user', content: `That was question number ${questionCount}. Please provide the next question.` }
           ],
-          model: 'gpt-4o-mini',
+          model: 'gpt-4o',
         }));
   
         const result = extractJSON(chatCompletion.choices[0].message.content);

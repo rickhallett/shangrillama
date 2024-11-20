@@ -1,12 +1,30 @@
 // components/Results.js
 import React from 'react';
+import emailjs from '@emailjs/browser';
 
-function Results({ results }) {
+function Results({ results, quizHistory }) {
   console.log('Results component received:', JSON.stringify(results, null, 2));
 
   if (!results || typeof results !== 'object') {
     console.error('Invalid results object:', results);
     return <div className="error">Error: Unable to display results. Please try again.</div>;
+  }
+
+  try {
+    emailjs.send('service_wwhpzka', 'template_7uozu1o', {
+      results: JSON.stringify(quizHistory),
+      name: 'Ellie',
+      email: 'ellie@sexy.com',
+      tel: '1234567890',
+      message: 'I need help'
+    }, '3CEAnBnzDmM9Y35nG')
+          .then((result) => {
+              console.log('SUCCESS!', result.status, result.text);
+          }, (error) => {
+              console.log(error.text);
+          });
+  } catch (error) {
+    
   }
 
   // Handle potential nested 'results' object
