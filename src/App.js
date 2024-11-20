@@ -15,6 +15,7 @@ function App() {
   const [style, setStyle] = useState(null);
   const [error, setError] = useState(null);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [quizHistory, setQuizHistory] = useState([]);
 
   useEffect(() => {
     if (style) {
@@ -27,6 +28,13 @@ function App() {
     setError(null);
     try {
       const response = await startQuestionnaire(style);
+      setQuizHistory([{
+        questionNumber: 1,
+        question: response.nextQuestion,
+        options: response.options || [],
+        answer: null,
+        response: response
+      }]);
       setCurrentQuestion(response.nextQuestion);
       setOptions(response.options || []);
       setQuestionCount(1);
@@ -52,6 +60,14 @@ function App() {
     try {
       const response = await submitAnswer(answer);
       console.log('App: API response:', JSON.stringify(response, null, 2));
+      setQuizHistory(prev => [...prev, {
+        questionNumber: questionCount,
+        question: currentQuestion,
+        options: options,
+        answer: answer,
+        response: response
+      }]);
+      console.log('App: Quiz history:', JSON.stringify(quizHistory, null, 2));
       if (response.isComplete) {
         console.log('App: Questionnaire complete, setting results');
         console.log('App: Results object:', JSON.stringify(response.results, null, 2));
@@ -91,13 +107,13 @@ function App() {
 
   return (
     <div className="App">
-      <h1>52 Sami Pick Up</h1>
+      <h1>Make your move, Ellie</h1>
       {loading ? (
         <p className='loading-text'>Loading... Please wait.</p>
       ) : error ? (
         <p className="error">{error}</p>
       ) : results ? (
-        <Results results={results} />
+        <Results results={results} quizHistory={quizHistory} />
       ) : currentQuestion ? (
         <>
           <p className="question-count">Question {questionCount} of 10</p>
