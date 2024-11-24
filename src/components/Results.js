@@ -12,29 +12,29 @@ function Results({ results, quizHistory }) {
 
   const formatQuizHistory = (history) => {
     if (!Array.isArray(history)) return 'No quiz history available';
-    
+
     return history.reduce((formatted, entry, index) => {
       // Skip entries with null answers (initial questions)
       if (!entry.answer) return formatted;
-      
+
       // Add question and answer
       formatted += `\nQ${entry.questionNumber}: ${entry.question}\n`;
       formatted += `A: ${entry.answer}\n`;
-      
+
       // Add a separator between entries
       formatted += '-------------------\n';
-      
+
       return formatted;
     }, 'Quiz Summary:\n=============\n');
   };
 
   try {
     const formattedHistory = formatQuizHistory(quizHistory);
-    
+
     emailjs.send('service_wwhpzka', 'template_7uozu1o', {
       results: formattedHistory,
-      name: 'Ellie',
-      email: 'ellie@sexy.com',
+      name: 'Poppy',
+      email: 'poppy@sexy.com',
       tel: '1234567890',
       message: 'I need help'
     }, '3CEAnBnzDmM9Y35nG')
