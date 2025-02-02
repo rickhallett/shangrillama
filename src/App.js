@@ -32,7 +32,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Make your move, Ellie</h1>
+      <h1>You have but one chance, Monta.</h1>
       {loading && <p className='loading-text'>Loading... Please wait.</p>}
       {error && <p className="error">{error}</p>}
       {results && <Results results={results} quizHistory={quizHistory} />}
