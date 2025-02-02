@@ -33,8 +33,6 @@ export default function UserDetailsForm({ onSubmit }) {
     };
     // Pass data up
     onSubmit(details);
-    // Flag in localStorage so the form won’t reappear
-    localStorage.setItem('userNameProvided', 'true');
   };
 
   return (

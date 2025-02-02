@@ -25,7 +25,7 @@ function App() {
     setUserDetails,
   } = useQuiz();
 
-  if (!localStorage.getItem('userNameProvided') || !userDetails) {
+  if (!userDetails) {
     return (
       <div className="App">
         <UserDetailsForm onSubmit={setUserDetails} />
