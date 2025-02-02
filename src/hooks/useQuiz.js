@@ -12,6 +12,7 @@ export function useQuiz() {
     error: null,
     quizStarted: false,
     quizHistory: [],
+    userDetails: null,
   });
 
   useEffect(() => {
@@ -46,6 +47,11 @@ export function useQuiz() {
     } finally {
       setState(prev => ({ ...prev, loading: false }));
     }
+    setUserDetails
+  };
+
+  const setUserDetails = (details) => {
+    setState(prev => ({ ...prev, userDetails: details }));
   };
 
   const handleAnswer = async (answer) => {

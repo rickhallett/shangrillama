@@ -6,6 +6,7 @@ import Results from './components/Results';
 import { StyleSelector } from './components/StyleSelector';
 import { useQuiz } from './hooks/useQuiz';
 import './index.css';
+import UserDetailsForm from './components/UserDetailsForm';
 
 function App() {
   const {
@@ -20,7 +21,17 @@ function App() {
     quizHistory,
     handleAnswer,
     setStyle,
+    userDetails,
+    setUserDetails,
   } = useQuiz();
+
+  if (!localStorage.getItem('userNameProvided') || !userDetails) {
+    return (
+      <div className="App">
+        <UserDetailsForm onSubmit={setUserDetails} />
+      </div>
+    );
+  }
 
   if (!quizStarted && !style) {
     return (
