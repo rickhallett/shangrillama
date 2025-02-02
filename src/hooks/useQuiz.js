@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { startQuestionnaire, submitAnswer } from '../services/api';
 
 export function useQuiz() {
@@ -15,13 +15,7 @@ export function useQuiz() {
     userDetails: null,
   });
 
-  useEffect(() => {
-    if (state.style) {
-      startQuiz();
-    }
-  }, [state.style]);
-
-  const startQuiz = async () => {
+  const startQuiz = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const response = await startQuestionnaire(state.style);
@@ -47,8 +41,13 @@ export function useQuiz() {
     } finally {
       setState(prev => ({ ...prev, loading: false }));
     }
-    setUserDetails
-  };
+  }, [state.style]);
+
+  useEffect(() => {
+    if (state.style) {
+      startQuiz();
+    }
+  }, [state.style, startQuiz]);
 
   const setUserDetails = (details) => {
     setState(prev => ({ ...prev, userDetails: details }));
@@ -67,18 +66,18 @@ export function useQuiz() {
           answer,
           response
         }],
-        ...(response.isComplete 
+        ...(response.isComplete
           ? {
-              results: response.results,
-              currentQuestion: null,
-              options: [],
-              quizStarted: false,
-            }
+            results: response.results,
+            currentQuestion: null,
+            options: [],
+            quizStarted: false,
+          }
           : {
-              questionCount: prev.questionCount + 1,
-              currentQuestion: response.nextQuestion,
-              options: response.options || [],
-            }
+            questionCount: prev.questionCount + 1,
+            currentQuestion: response.nextQuestion,
+            options: response.options || [],
+          }
         ),
       }));
     } catch (err) {
@@ -97,5 +96,6 @@ export function useQuiz() {
     ...state,
     handleAnswer,
     setStyle: (style) => setState(prev => ({ ...prev, style })),
+    setUserDetails,
   };
 } 
