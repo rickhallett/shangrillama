@@ -36,7 +36,7 @@ function App() {
   if (!quizStarted && !style) {
     return (
       <div className="App">
-        <StyleSelector onStyleSelect={setStyle} />
+        <StyleSelector onStyleSelect={setStyle} userName={userDetails?.name || 'Monta'} />
       </div>
     );
   }

@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 
-export function StyleSelector({ onStyleSelect }) {
+export function StyleSelector({ onStyleSelect, userName }) {
   const styles = ['formal', 'funny', 'flirty', 'outrageous'];
 
   return (
     <>
-      <h1>You have but one chance, Monta.</h1>
+      <h1>You have but one chance, {userName}.</h1>
       <h2>Choose your preferred style:</h2>
       <div className="style-buttons">
         {styles.map(style => (
