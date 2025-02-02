@@ -7,6 +7,7 @@ import { StyleSelector } from './components/StyleSelector';
 import { useQuiz } from './hooks/useQuiz';
 import './index.css';
 import UserDetailsForm from './components/UserDetailsForm';
+import QuizBlocker from './components/QuizBlocker';
 
 function App() {
   const {
@@ -25,12 +26,28 @@ function App() {
     setUserDetails,
   } = useQuiz();
 
+  // Check if quiz was already started
+  const quizCompleted = localStorage.getItem('quizStarted') === 'true';
+
+  if (quizCompleted && userDetails) {
+    return (
+      <div className="App">
+        <QuizBlocker />
+      </div>
+    );
+  }
+
   if (!userDetails) {
     return (
       <div className="App">
         <UserDetailsForm onSubmit={setUserDetails} />
       </div>
     );
+  }
+
+  // Set quiz started in localStorage when quiz begins
+  if (quizStarted && !localStorage.getItem('quizStarted')) {
+    localStorage.setItem('quizStarted', 'true');
   }
 
   if (!quizStarted && !style) {

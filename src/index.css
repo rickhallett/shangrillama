@@ -255,3 +255,21 @@ h1, h2, h3 {
   justify-content: space-around;
   margin-top: 20px;
 }
+
+.quiz-blocker {
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #00FF00;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.quiz-blocker h2 {
+  color: #00FF00;
+  margin-bottom: 15px;
+}
+
+.quiz-blocker p {
+  font-size: 18px;
+  line-height: 1.5;
+}
