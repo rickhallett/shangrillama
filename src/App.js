@@ -36,17 +36,17 @@ function App() {
   if (!quizStarted && !style) {
     return (
       <div className="App">
-        <StyleSelector onStyleSelect={setStyle} userName={userDetails?.name || 'Monta'} />
+        <StyleSelector onStyleSelect={setStyle} userName={userDetails?.name} />
       </div>
     );
   }
 
   return (
     <div className="App">
-      <h1>You have but one chance, {userDetails?.name || 'Monta'}.</h1>
+      <h1>You have but one chance, {userDetails?.name}.</h1>
       {loading && <p className='loading-text'>Loading... Please wait.</p>}
       {error && <p className="error">{error}</p>}
-      {results && <Results results={results} quizHistory={quizHistory} />}
+      {results && <Results results={results} quizHistory={quizHistory} userDetails={userDetails} />}
       {currentQuestion && (
         <>
           <p className="question-count">Question {questionCount} of 10</p>
