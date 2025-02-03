@@ -5,6 +5,12 @@ const userDetails = JSON.parse(localStorage.getItem('userDetails')) || null;
 const quizCompleted = JSON.parse(localStorage.getItem('quizCompleted')) || false;
 const quizStarted = JSON.parse(localStorage.getItem('quizStarted')) || false;
 
+window.resetQuiz = () => {
+  localStorage.removeItem('userDetails');
+  localStorage.removeItem('quizStarted');
+  localStorage.removeItem('quizCompleted');
+};
+
 export function useQuiz() {
   const [state, setState] = useState({
     currentQuestion: null,
