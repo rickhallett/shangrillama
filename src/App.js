@@ -28,6 +28,8 @@ function App() {
     quizStarted,
   } = useQuiz();
 
+  console.log({ quizStarted, quizCompleted, userDetails, style })
+
   if (quizCompleted && userDetails) {
     return (
       <div className="App">
@@ -44,10 +46,11 @@ function App() {
     );
   }
 
+
   // Set quiz started in localStorage when quiz begins
-  if (quizStarted && !localStorage.getItem('quizStarted')) {
-    localStorage.setItem('quizStarted', 'true');
-  }
+  // if (quizStarted && !localStorage.getItem('quizStarted')) {
+  //   localStorage.setItem('quizStarted', 'true');
+  // }
 
   if (!quizStarted && !style) {
     return (
