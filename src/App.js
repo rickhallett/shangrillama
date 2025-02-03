@@ -33,7 +33,7 @@ function App() {
   if (quizCompleted && userDetails) {
     return (
       <div className="App">
-        <QuizBlocker />
+        <QuizBlocker results={results} />
       </div>
     );
   }
@@ -47,10 +47,6 @@ function App() {
   }
 
 
-  // Set quiz started in localStorage when quiz begins
-  // if (quizStarted && !localStorage.getItem('quizStarted')) {
-  //   localStorage.setItem('quizStarted', 'true');
-  // }
 
   if (!quizStarted && !style) {
     return (

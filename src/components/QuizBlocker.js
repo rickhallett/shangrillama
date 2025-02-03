@@ -1,8 +1,6 @@
 import React from 'react';
 
-function QuizBlocker() {
-  // Get results from localStorage
-  const results = JSON.parse(localStorage.getItem('results'));
+function QuizBlocker({ results }) {
   const compatibilityScore = results?.compatibilityScore || 'N/A';
 
   return (
