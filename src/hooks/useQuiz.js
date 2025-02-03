@@ -1,15 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { startQuestionnaire, submitAnswer } from '../services/api';
 
-const userDetails = JSON.parse(localStorage.getItem('userDetails')) || null;
-const quizCompleted = JSON.parse(localStorage.getItem('quizCompleted')) || false;
-const quizStarted = JSON.parse(localStorage.getItem('quizStarted')) || false;
-
-window.resetQuiz = () => {
-  localStorage.removeItem('userDetails');
-  localStorage.removeItem('quizStarted');
-  localStorage.removeItem('quizCompleted');
-};
 
 export function useQuiz() {
   const [state, setState] = useState({
@@ -21,9 +12,9 @@ export function useQuiz() {
     results: null,
     style: null,
     error: null,
-    quizStarted,
-    quizCompleted,
-    userDetails,
+    quizStarted: false,
+    quizCompleted: false,
+    userDetails: null,
   });
 
   const startQuiz = useCallback(async () => {
@@ -62,7 +53,6 @@ export function useQuiz() {
 
   const setUserDetails = (details) => {
     setState(prev => ({ ...prev, userDetails: details }));
-    localStorage.setItem('userDetails', JSON.stringify(details));
   };
 
   const handleAnswer = async (answer) => {
