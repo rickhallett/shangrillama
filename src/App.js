@@ -5,29 +5,28 @@ import AnswerInput from './components/AnswerInput';
 import Results from './components/Results';
 import { StyleSelector } from './components/StyleSelector';
 import { useQuiz } from './hooks/useQuiz';
-import './index.css';
 import UserDetailsForm from './components/UserDetailsForm';
 import QuizBlocker from './components/QuizBlocker';
+// import './App.css'; // merged into index.css
+import './index.css';
 
 function App() {
   const {
     currentQuestion,
     questionCount,
+    quizHistory,
     options,
     loading,
     results,
     style,
     error,
-    quizStarted,
-    quizHistory,
     handleAnswer,
     setStyle,
     userDetails,
     setUserDetails,
+    quizCompleted,
+    quizStarted,
   } = useQuiz();
-
-  // Check if quiz was already started
-  const quizCompleted = localStorage.getItem('quizStarted') === 'true';
 
   if (quizCompleted && userDetails) {
     return (
@@ -61,8 +60,7 @@ function App() {
   return (
     <div className="App">
       <h1>You have but one chance, {userDetails?.name}.</h1>
-      {loading && <p className='loading-text'>Loading... Please wait.</p>}
-      {error && <p className="error">{error}</p>}
+      {loading && <p className='loading-text'>Loading... Please wait.</p>}      {error && <p className="error">{error}</p>}
       {results && <Results results={results} quizHistory={quizHistory} userDetails={userDetails} />}
       {currentQuestion && (
         <>

@@ -1,20 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
 import { startQuestionnaire, submitAnswer } from '../services/api';
 
-const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
+const userDetails = JSON.parse(localStorage.getItem('userDetails')) || null;
+const quizCompleted = JSON.parse(localStorage.getItem('quizCompleted')) || false;
+const quizStarted = JSON.parse(localStorage.getItem('quizStarted')) || false;
 
 export function useQuiz() {
   const [state, setState] = useState({
     currentQuestion: null,
     questionCount: 0,
+    quizHistory: [],
     options: [],
     loading: false,
     results: null,
     style: null,
     error: null,
-    quizStarted: false,
-    quizHistory: [],
-    userDetails: storedUserDetails || null,
+    quizStarted,
+    quizCompleted,
+    userDetails,
   });
 
   const startQuiz = useCallback(async () => {
