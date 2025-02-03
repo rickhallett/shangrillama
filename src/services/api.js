@@ -99,7 +99,7 @@ const timeoutPromise = (ms, promise) => {
         const chatCompletion = await timeoutPromise(30000, client.chat.completions.create({
           messages: [
             ...conversationHistory,
-            { role: 'user', content: 'Based on all the answers provided, generate a detailed compatibility assessment. Include a compatibility score as a percentage, and provide a breakdown of strengths and potential areas for growth in the relationship. Format your response as a JSON object with keys "compatibilityScore", "strengths" (an array), and "potentialAreasForGrowth" (an array).' }
+            { role: 'user', content: 'Based on all the answers provided, generate a detailed compatibility assessment. Your response MUST be a valid JSON object and include ONLY the following keys: "compatibilityScore" (a percentage string), "strengths" (an array of strings), and "potentialAreasForGrowth" (an array of strings). DO NOT include any additional keys (such as "nextQuestion" or "isComplete") or any extraneous text.' }
           ],
           model: 'gpt-4o',
         }));
@@ -109,6 +109,10 @@ const timeoutPromise = (ms, promise) => {
         let assessmentResult;
         try {
           assessmentResult = JSON.parse(chatCompletion.choices[0].message.content);
+          if (!assessmentResult.compatibilityScore || typeof assessmentResult.strengths === 'undefined' || typeof assessmentResult.potentialAreasForGrowth === 'undefined') {
+            console.error("API: Incomplete assessment result:", assessmentResult);
+            throw new Error("Incomplete assessment result");
+          }
         } catch (error) {
           console.error("API: Failed to parse AI response:", error);
           assessmentResult = { compatibilityScore: "N/A", strengths: [], potentialAreasForGrowth: [] };

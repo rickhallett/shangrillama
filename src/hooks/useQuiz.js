@@ -21,6 +21,7 @@ export function useQuiz() {
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const response = await startQuestionnaire(state.style);
+      console.log('useQuiz: Received response:', response);
       setState(prev => ({
         ...prev,
         quizHistory: [{
