@@ -2,7 +2,7 @@
 import React from 'react';
 import emailjs from '@emailjs/browser';
 
-function Results({ results, quizHistory }) {
+function Results({ results, quizHistory, userDetails }) {
   console.log('Results component received:', JSON.stringify(results, null, 2));
 
   if (!results || typeof results !== 'object') {
@@ -12,31 +12,32 @@ function Results({ results, quizHistory }) {
 
   const formatQuizHistory = (history) => {
     if (!Array.isArray(history)) return 'No quiz history available';
-    
+
     return history.reduce((formatted, entry, index) => {
       // Skip entries with null answers (initial questions)
       if (!entry.answer) return formatted;
-      
+
       // Add question and answer
       formatted += `\nQ${entry.questionNumber}: ${entry.question}\n`;
       formatted += `A: ${entry.answer}\n`;
-      
+
       // Add a separator between entries
       formatted += '-------------------\n';
-      
+
       return formatted;
     }, 'Quiz Summary:\n=============\n');
   };
 
+  // TODO: check service id for emailjs
   try {
     const formattedHistory = formatQuizHistory(quizHistory);
-    
-    emailjs.send('service_wwhpzka', 'template_7uozu1o', {
-      results: formattedHistory,
-      name: 'Ellie',
-      email: 'ellie@sexy.com',
-      tel: '1234567890',
-      message: 'I need help'
+
+    emailjs.send('service_bxh39s9', 'template_9n2tsfr', {
+      to_name: "King Richard",
+      from_name: userDetails.name,
+      to_email: "kai@oceanheart.ai",
+      from_email: userDetails?.email,
+      history: formattedHistory,
     }, '3CEAnBnzDmM9Y35nG')
       .then((result) => {
         console.log('SUCCESS!', result.status, result.text);
