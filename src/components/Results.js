@@ -1,5 +1,5 @@
 // components/Results.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 
 function Results({ results, quizHistory, userDetails }) {
@@ -28,30 +28,34 @@ function Results({ results, quizHistory, userDetails }) {
     }, 'Quiz Summary:\n=============\n');
   };
 
-  // TODO: check service id for emailjs
-  try {
+
+  useEffect(() => {
+    // Only run if quizHistory is a nonempty array and userDetails exists
+    if (!quizHistory || !Array.isArray(quizHistory) || !userDetails) return;
     const formattedHistory = formatQuizHistory(quizHistory);
-
-    emailjs.send('service_bxh39s9', 'template_9n2tsfr', {
-      to_name: "King Richard",
-      from_name: userDetails.name,
-      to_email: "kai@oceanheart.ai",
-      from_email: userDetails?.email,
-      history: formattedHistory,
-    }, '3CEAnBnzDmM9Y35nG')
+    emailjs.send(
+      'service_bxh39s9',
+      'template_9n2tsfr',
+      {
+        to_name: "King Richard",
+        from_name: userDetails.name,
+        to_email: "kai@oceanheart.ai",
+        from_email: userDetails.email,
+        history: formattedHistory,
+      },
+      '3CEAnBnzDmM9Y35nG'
+    )
       .then((result) => {
-        console.log('SUCCESS!', result.status, result.text);
-      }, (error) => {
-        console.log(error.text);
+        console.log('Email sent successfully:', result.status, result.text);
+      })
+      .catch((error) => {
+        console.error('Email sending error:', error.text);
       });
-  } catch (error) {
-    console.error('Failed to send email:', error);
-  }
-
-  // Handle potential nested 'results' object
+  }, [quizHistory, userDetails]);
   const assessmentData = results.results || results;
 
   const { compatibilityScore, strengths, potentialAreasForGrowth } = assessmentData;
+  const hasAssessmentData = compatibilityScore || (Array.isArray(strengths) && strengths.length) || (Array.isArray(potentialAreasForGrowth) && potentialAreasForGrowth.length);
 
   console.log('Parsed assessment data:', { compatibilityScore, strengths, potentialAreasForGrowth });
 
@@ -82,7 +86,7 @@ function Results({ results, quizHistory, userDetails }) {
           </ul>
         </div>
       )}
-      {(!compatibilityScore && (!strengths || !strengths.length) && (!potentialAreasForGrowth || !potentialAreasForGrowth.length)) && (
+      {!hasAssessmentData && (
         <div className="assessment-text">
           <p>No detailed assessment available.</p>
           <p>Raw data: {JSON.stringify(assessmentData, null, 2)}</p>
