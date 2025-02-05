@@ -95,10 +95,14 @@ export function useQuiz() {
     }
   };
 
+  const setStyle = (style) => {
+    setState(prev => ({ ...prev, style }));
+  };
+
   return {
     ...state,
     handleAnswer,
-    setStyle: (style) => setState(prev => ({ ...prev, style })),
+    setStyle,
     setUserDetails,
   };
 } 
