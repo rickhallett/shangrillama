@@ -26,7 +26,19 @@ export function useQuiz() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ style: state.style }),
       });
-      const { result, conversationHistory, questionCount } = await startRes.json();
+      const data = await startRes.json();
+      if (data.error) {
+        setState(prev => ({ ...prev, error: data.error }));
+        return;
+      }
+      const { result, conversationHistory, questionCount } = data;
+      if (!result || !result.nextQuestion) {
+        setState(prev => ({
+          ...prev,
+          error: "Invalid response from API: " + JSON.stringify(result)
+        }));
+        return;
+      }
       console.log('useQuiz: Received response:', result);
       setState(prev => ({
         ...prev,
