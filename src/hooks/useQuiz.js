@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 
-export function useQuiz() {
+export function useQuiz(isDevMode = false) {
   const [state, setState] = useState({
     currentQuestion: null,
     questionCount: 0,
@@ -55,6 +55,7 @@ export function useQuiz() {
         quizStarted: true,
         conversationHistory: conversationHistory
       }));
+
     } catch (err) {
       setState(prev => ({
         ...prev,
