@@ -56,6 +56,7 @@ export const startQuestionnaire = async (style) => {
         model: 'gpt-4o',
     });
 
+    console.log("Raw AI response:", chatCompletion.choices[0].message.content);
     const result = extractJSON(chatCompletion.choices[0].message.content);
     if (!result) {
         throw new Error("Failed to parse AI response");
@@ -134,6 +135,7 @@ const timeoutPromise = (ms, promise) => {
           model: 'gpt-4o',
         }));
   
+        console.log("Raw AI response:", chatCompletion.choices[0].message.content);
         const result = extractJSON(chatCompletion.choices[0].message.content);
         if (!result) {
           throw new Error("Failed to parse AI response");
