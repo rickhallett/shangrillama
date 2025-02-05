@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { startQuestionnaire, submitAnswer } from '../services/api';
-import { storeRawData } from '../services/rawData';
 
 
 export function useQuiz() {
@@ -17,26 +15,33 @@ export function useQuiz() {
     quizCompleted: false,
     totalQuestions: null,
     userDetails: null,
+    conversationHistory: [],
   });
 
   const startQuiz = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await startQuestionnaire(state.style);
-      console.log('useQuiz: Received response:', response);
+      const startRes = await fetch("/api/start-questionnaire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ style: state.style }),
+      });
+      const { result, conversationHistory, questionCount } = await startRes.json();
+      console.log('useQuiz: Received response:', result);
       setState(prev => ({
         ...prev,
         quizHistory: [{
           questionNumber: 1,
-          question: response.nextQuestion,
-          options: response.options || [],
+          question: result.nextQuestion,
+          options: result.options || [],
           answer: null,
-          response
+          response: result
         }],
-        currentQuestion: response.nextQuestion,
-        options: response.options || [],
-        questionCount: 1,
+        currentQuestion: result.nextQuestion,
+        options: result.options || [],
+        questionCount: questionCount,
         quizStarted: true,
+        conversationHistory: conversationHistory
       }));
     } catch (err) {
       setState(prev => ({
@@ -60,40 +65,47 @@ export function useQuiz() {
 
   const handleAnswer = async (answer) => {
     if (localStorage.getItem('shangri-dev-mode')) {
-      await storeRawData({
-        question: state.currentQuestion,
-        options: state.options,
-        answer,
-        style: state.style
+      await fetch("/api/store-raw-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: state.currentQuestion,
+          options: state.options,
+          answer,
+          style: state.style
+        })
       });
       return;
     }
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await submitAnswer(answer);
-      setState(prev => ({
-        ...prev,
-        quizHistory: [...prev.quizHistory, {
-          questionNumber: prev.questionCount,
-          question: prev.currentQuestion,
-          options: prev.options,
-          answer,
-          response
-        }],
-        ...(response.isComplete
-          ? {
-            results: response.results,
-            currentQuestion: null,
-            options: [],
-            quizStarted: false,
-          }
-          : {
-            questionCount: prev.questionCount + 1,
-            currentQuestion: response.nextQuestion,
-            options: response.options || [],
-          }
-        ),
-      }));
+      const answerRes = await fetch("/api/submit-answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationHistory: state.conversationHistory,
+          questionCount: state.questionCount,
+          answer
+        })
+      });
+      const json = await answerRes.json();
+      if (json.isComplete) {
+        setState(prev => ({
+          ...prev,
+          results: json.results,
+          currentQuestion: null,
+          options: [],
+          quizStarted: false,
+        }));
+      } else {
+        setState(prev => ({
+          ...prev,
+          questionCount: json.questionCount,
+          currentQuestion: json.nextQuestion,
+          options: json.options || [],
+          conversationHistory: json.conversationHistory,
+        }));
+      }
     } catch (err) {
       setState(prev => ({
         ...prev,
