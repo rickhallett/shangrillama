@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { startQuestionnaire, submitAnswer } from '../services/api';
+import { storeRawData } from '../services/rawData';
 
 
 export function useQuiz() {
@@ -14,6 +15,7 @@ export function useQuiz() {
     error: null,
     quizStarted: false,
     quizCompleted: false,
+    totalQuestions: null,
     userDetails: null,
   });
 
@@ -57,6 +59,15 @@ export function useQuiz() {
   };
 
   const handleAnswer = async (answer) => {
+    if (localStorage.getItem('shangri-dev-mode')) {
+      await storeRawData({
+        question: state.currentQuestion,
+        options: state.options,
+        answer,
+        style: state.style
+      });
+      return;
+    }
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
       const response = await submitAnswer(answer);
@@ -99,10 +110,13 @@ export function useQuiz() {
     setState(prev => ({ ...prev, style }));
   };
 
+  const setTotalQuestions = (value) => setState(prev => ({ ...prev, totalQuestions: value }));
+
   return {
     ...state,
     handleAnswer,
     setStyle,
     setUserDetails,
+    setTotalQuestions,
   };
 } 
