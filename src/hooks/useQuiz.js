@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { storeRawData } from '../services/api';
 
 
 export function useQuiz(isDevMode = false) {
@@ -78,15 +79,11 @@ export function useQuiz(isDevMode = false) {
 
   const handleAnswer = async (answer) => {
     if (localStorage.getItem('shangri-dev-mode')) {
-      await fetch("/api/store-raw-data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      await storeRawData({
           question: state.currentQuestion,
           options: state.options,
           answer,
           style: state.style
-        })
       });
       return;
     }

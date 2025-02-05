@@ -149,3 +149,32 @@ const timeoutPromise = (ms, promise) => {
       throw error;
     }
   };
+
+export const storeRawData = async (data) => {
+  try {
+    const response = await fetch("/api/store-raw-data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    return await response.json();
+  } catch (err) {
+    console.error('storeRawData error:', err);
+    throw err;
+  }
+};
+
+export const encodeAndStoreData = async (rawData) => {
+  try {
+    const response = await fetch("/api/encode-store-data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rawData })
+    });
+    const json = await response.json();
+    return json.success;
+  } catch (err) {
+    console.error('encodeAndStoreData error:', err);
+    return false;
+  }
+};
