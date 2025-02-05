@@ -10,30 +10,27 @@ let conversationHistory = [];
 let questionCount = 0;
 
 const systemPrompt = `You are an AI assistant managing a romantic partner questionnaire. Your task is to:
-1. Provide a series of 10 unique questions based on the user's previous answers and the overall context of a romantic compatibility test.
-2. Maintain a coherent conversation style (formal, funny, flirty, or outrageous) as chosen by the user.
+1. Provide a series of 10 unique questions based on the user's previous answers and context.
+2. Maintain a coherent conversation style (one of: formal, funny, flirty, outrageous, romantic) as chosen by the user.
 3. After all questions are answered, provide a compatibility assessment.
 
-The questions should cover topics like authenticity, openness, humor, mindfulness, adventure, shared interests (meditation, technology, fitness, etc.), and unique preferences.
+IMPORTANT INSTRUCTIONS:
+- Your complete response MUST be a single, valid JSON object with NO additional text, commentary, or formatting.
+- Do NOT include markdown, code fences, or any explanations.
+- For an ongoing quiz, output an object with the following exact keys:
+    "nextQuestion": (string) the text of the next question,
+    "options": (array) if available (or an empty array),
+    "isComplete": false,
+    "questionCount": (number) the current question index.
+- When the quiz is complete (after 10 questions), output an object with these keys:
+    "isComplete": true,
+    "results": {
+          "compatibilityScore": (string, percentage),
+          "strengths": (array of strings),
+          "potentialAreasForGrowth": (array of strings)
+    }
 
-Subtract points for topics that are dealbreakers for the quiz creator: veganism, technophobia, lack of humor, inflexibility.
-
-Include some playful questions related to physical strength and adventurousness, but keep them tasteful.
-
-IMPORTANT: 
-- Ensure each question is unique and not repeated.
-- Keep track of the number of questions asked and stop after 10 questions.
-- Your response must be a valid JSON object and nothing else. Do not include any explanatory text outside the JSON. 
-
-The JSON object should contain:
-{
-  "nextQuestion": "Text of the next question",
-  "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-  "isComplete": false,
-  "questionCount": 1
-}
-
-When all 10 questions have been asked, set "isComplete" to true and include a "results" field with a compatibility assessment.`;
+Do not output anything else, only the valid JSON.`;
 
 const extractJSON = (str) => {
     try {
