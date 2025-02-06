@@ -30,12 +30,16 @@ function quizReducer(state, action) {
         quizHistory: [{
           questionNumber: 1,
           question: action.payload.result.nextQuestion,
-          options: action.payload.result.options || [],
+          options: (Array.isArray(action.payload.result.options) && action.payload.result.options.length > 0)
+            ? action.payload.result.options
+            : defaultOptions,
           answer: null,
           response: action.payload.result
         }],
         currentQuestion: action.payload.result.nextQuestion,
-        options: action.payload.result.options || [],
+        options: (Array.isArray(action.payload.result.options) && action.payload.result.options.length > 0)
+            ? action.payload.result.options
+            : defaultOptions,
         questionCount: action.payload.questionCount,
         quizStarted: true,
         conversationHistory: action.payload.conversationHistory,
