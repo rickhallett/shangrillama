@@ -1,26 +1,84 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useReducer, useEffect, useCallback } from 'react';
 import { storeRawData } from '../services/api';
+
+const initialState = {
+  currentQuestion: null,
+  questionCount: 0,
+  quizHistory: [],
+  options: [],
+  loading: false,
+  results: null,
+  style: null,
+  error: null,
+  quizStarted: false,
+  quizCompleted: false,
+  totalQuestions: null,
+  userDetails: null,
+  conversationHistory: [],
+};
+
+function quizReducer(state, action) {
+  switch (action.type) {
+    case 'START_QUIZ_REQUEST':
+      return { ...state, loading: true, error: null };
+    case 'START_QUIZ_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        quizHistory: [{
+          questionNumber: 1,
+          question: action.payload.result.nextQuestion,
+          options: action.payload.result.options || [],
+          answer: null,
+          response: action.payload.result
+        }],
+        currentQuestion: action.payload.result.nextQuestion,
+        options: action.payload.result.options || [],
+        questionCount: action.payload.questionCount,
+        quizStarted: true,
+        conversationHistory: action.payload.conversationHistory,
+      };
+    case 'START_QUIZ_FAILURE':
+      return { ...state, loading: false, error: action.payload.error };
+    case 'SUBMIT_ANSWER_REQUEST':
+      return { ...state, loading: true, error: null };
+    case 'SUBMIT_ANSWER_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        questionCount: action.payload.questionCount,
+        currentQuestion: action.payload.nextQuestion,
+        options: action.payload.options || [],
+        conversationHistory: action.payload.conversationHistory,
+      };
+    case 'SUBMIT_ANSWER_SUCCESS_COMPLETED':
+      return {
+        ...state,
+        loading: false,
+        results: action.payload.results,
+        currentQuestion: null,
+        options: [],
+        quizStarted: false,
+      };
+    case 'SUBMIT_ANSWER_FAILURE':
+      return { ...state, loading: false, error: action.payload.error };
+    case 'SET_USER_DETAILS':
+      return { ...state, userDetails: action.payload };
+    case 'SET_STYLE':
+      return { ...state, style: action.payload };
+    case 'SET_TOTAL_QUESTIONS':
+      return { ...state, totalQuestions: action.payload };
+    default:
+      return state;
+  }
+}
 
 
 export function useQuiz(isDevMode = false) {
-  const [state, setState] = useState({
-    currentQuestion: null,
-    questionCount: 0,
-    quizHistory: [],
-    options: [],
-    loading: false,
-    results: null,
-    style: null,
-    error: null,
-    quizStarted: false,
-    quizCompleted: false,
-    totalQuestions: null,
-    userDetails: null,
-    conversationHistory: [],
-  });
+  const [state, dispatch] = useReducer(quizReducer, initialState);
 
   const startQuiz = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    dispatch({ type: 'START_QUIZ_REQUEST' });
     try {
       const startRes = await fetch("/api/start-questionnaire", {
         method: "POST",
@@ -29,41 +87,24 @@ export function useQuiz(isDevMode = false) {
       });
       const data = await startRes.json();
       if (data.error) {
-        setState(prev => ({ ...prev, error: data.error }));
+        dispatch({ type: 'START_QUIZ_FAILURE', payload: { error: data.error } });
         return;
       }
       const { result, conversationHistory, questionCount } = data;
       if (!result || !result.nextQuestion) {
-        setState(prev => ({
-          ...prev,
-          error: "Invalid response from API: " + JSON.stringify(result)
-        }));
+        dispatch({
+          type: 'START_QUIZ_FAILURE',
+          payload: { error: "Invalid response from API: " + JSON.stringify(result) }
+        });
         return;
       }
       console.log('useQuiz: Received response:', result);
-      setState(prev => ({
-        ...prev,
-        quizHistory: [{
-          questionNumber: 1,
-          question: result.nextQuestion,
-          options: result.options || [],
-          answer: null,
-          response: result
-        }],
-        currentQuestion: result.nextQuestion,
-        options: result.options || [],
-        questionCount: questionCount,
-        quizStarted: true,
-        conversationHistory: conversationHistory
-      }));
-
+      dispatch({
+        type: 'START_QUIZ_SUCCESS',
+        payload: { result, conversationHistory, questionCount }
+      });
     } catch (err) {
-      setState(prev => ({
-        ...prev,
-        error: "Failed to start the quiz. Please try again."
-      }));
-    } finally {
-      setState(prev => ({ ...prev, loading: false }));
+      dispatch({ type: 'START_QUIZ_FAILURE', payload: { error: "Failed to start the quiz. Please try again." } });
     }
   }, [state.style]);
 
@@ -80,14 +121,14 @@ export function useQuiz(isDevMode = false) {
   const handleAnswer = async (answer) => {
     if (localStorage.getItem('shangri-dev-mode')) {
       await storeRawData({
-          question: state.currentQuestion,
-          options: state.options,
-          answer,
-          style: state.style
+        question: state.currentQuestion,
+        options: state.options,
+        answer,
+        style: state.style
       });
       return;
     }
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    dispatch({ type: 'SUBMIT_ANSWER_REQUEST' });
     try {
       const answerRes = await fetch("/api/submit-answer", {
         method: "POST",
@@ -100,31 +141,24 @@ export function useQuiz(isDevMode = false) {
       });
       const json = await answerRes.json();
       if (json.isComplete) {
-        setState(prev => ({
-          ...prev,
-          results: json.results,
-          currentQuestion: null,
-          options: [],
-          quizStarted: false,
-        }));
+        dispatch({ type: 'SUBMIT_ANSWER_SUCCESS_COMPLETED', payload: { results: json.results } });
       } else {
-        setState(prev => ({
-          ...prev,
+        dispatch({ type: 'SUBMIT_ANSWER_SUCCESS', payload: {
           questionCount: json.questionCount,
-          currentQuestion: json.nextQuestion,
+          nextQuestion: json.nextQuestion,
           options: json.options || [],
           conversationHistory: json.conversationHistory,
-        }));
+        }});
       }
     } catch (err) {
-      setState(prev => ({
-        ...prev,
-        error: err.message === "Request timed out"
-          ? "The request took too long to respond. Please try again."
-          : "Failed to submit your answer. Please try again.",
-      }));
-    } finally {
-      setState(prev => ({ ...prev, loading: false }));
+      dispatch({
+        type: 'SUBMIT_ANSWER_FAILURE',
+        payload: {
+          error: err.message === "Request timed out"
+            ? "The request took too long to respond. Please try again."
+            : "Failed to submit your answer. Please try again."
+        }
+      });
     }
   };
 
