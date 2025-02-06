@@ -1,5 +1,8 @@
 import React, { createContext, useReducer, useCallback } from 'react';
 import { startQuestionnaire, submitAnswer, storeRawData } from '../services/api';
+import { questions } from '../services/questionData';  // if you plan to derive from questionData
+// Define default multiple-choice options; adjust as needed.
+const defaultOptions = ['Yes', 'No', 'Maybe'];
 
 const initialState = {
   currentQuestion: null,
@@ -27,7 +30,9 @@ function quizReducer(state, action) {
         ...state,
         loading: false,
         currentQuestion: action.payload.result.nextQuestion,
-        options: action.payload.result.options || [],
+        options: (Array.isArray(action.payload.result.options) && action.payload.result.options.length > 0)
+            ? action.payload.result.options
+            : defaultOptions,
         quizHistory: [{ question: action.payload.result.nextQuestion, answer: null }],
         quizStarted: true,
         conversationHistory: [action.payload.result],
@@ -52,7 +57,9 @@ function quizReducer(state, action) {
         ...state,
         loading: false,
         currentQuestion: action.payload.nextQuestion,
-        options: action.payload.options || [],
+        options: (Array.isArray(action.payload.options) && action.payload.options.length > 0)
+            ? action.payload.options
+            : defaultOptions,
         conversationHistory: action.payload.conversationHistory,
         quizHistory: state.quizHistory.concat({ question: action.payload.nextQuestion, answer: action.payload.answer }),
         questionCount: action.payload.questionCount

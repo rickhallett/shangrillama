@@ -1,5 +1,7 @@
 import { useReducer, useEffect, useCallback } from 'react';
 import { storeRawData } from '../services/api';
+// Define default multiple-choice options; adjust as needed.
+const defaultOptions = ['Yes', 'No', 'Maybe'];
 
 const initialState = {
   currentQuestion: null,
@@ -48,7 +50,9 @@ function quizReducer(state, action) {
         loading: false,
         questionCount: action.payload.questionCount,
         currentQuestion: action.payload.nextQuestion,
-        options: action.payload.options || [],
+        options: (Array.isArray(action.payload.options) && action.payload.options.length > 0)
+            ? action.payload.options
+            : defaultOptions,
         conversationHistory: action.payload.conversationHistory,
       };
     case 'SUBMIT_ANSWER_SUCCESS_COMPLETED':
