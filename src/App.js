@@ -9,7 +9,7 @@ import { QuizContext } from './context/QuizContext';
 import './index.css';
 
 function App() {
-  const { state, submitQuizAnswer, setUserDetails } = useContext(QuizContext);
+  const { state, startQuiz, submitQuizAnswer, setUserDetails } = useContext(QuizContext);
   const { currentQuestion, questionCount, quizHistory, options, loading, results, style, error, quizStarted, quizCompleted, userDetails } = state;
 
   console.log({ quizStarted, quizCompleted, userDetails, style });
@@ -25,7 +25,7 @@ function App() {
   if (!quizStarted && !style) {
     return (
       <div className="App">
-        <StyleSelector onStyleSelect={ } userName={userDetails?.name} />
+        <StyleSelector onStyleSelect={ (selectedStyle) => startQuiz(selectedStyle) } userName={userDetails?.name} />
       </div>
     );
   }
