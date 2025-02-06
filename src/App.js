@@ -5,7 +5,6 @@ import AnswerInput from './components/AnswerInput';
 import Results from './components/Results';
 import { StyleSelector } from './components/StyleSelector';
 import UserDetailsForm from './components/UserDetailsForm';
-import QuizBlocker from './components/QuizBlocker';
 import { QuizContext } from './context/QuizContext';
 import './index.css';
 
@@ -14,14 +13,6 @@ function App() {
   const { currentQuestion, questionCount, quizHistory, options, loading, results, style, error, quizStarted, quizCompleted, userDetails } = state;
 
   console.log({ quizStarted, quizCompleted, userDetails, style });
-
-  if (quizCompleted && userDetails) {
-    return (
-      <div className="App">
-        <QuizBlocker results={results} />
-      </div>
-    );
-  }
 
   if (!userDetails) {
     return (
@@ -34,7 +25,7 @@ function App() {
   if (!quizStarted && !style) {
     return (
       <div className="App">
-        <StyleSelector onStyleSelect={(s) => {}} userName={userDetails?.name} />
+        <StyleSelector onStyleSelect={ } userName={userDetails?.name} />
       </div>
     );
   }
