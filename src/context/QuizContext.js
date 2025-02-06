@@ -91,7 +91,7 @@ export function QuizProvider({ children }) {
   }, []);
 
   const submitQuizAnswer = async (answer) => {
-    if(state.mode === 'dev') {
+    if (state.mode === 'dev') {
       await storeRawData({
         question: state.currentQuestion,
         options: state.options,
