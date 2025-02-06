@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback } from 'react';
+import React, { createContext, useReducer, useCallback } from 'react';
 import { startQuestionnaire, submitAnswer, storeRawData } from '../services/api';
 
 const initialState = {
