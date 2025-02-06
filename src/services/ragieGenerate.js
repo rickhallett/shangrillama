@@ -51,7 +51,7 @@ const chatCompletion = await openai.chat.completions.create({
     { role: "system", content: systemPrompt },
     { role: "user", content: query },
   ],
-  model: "gpt-4o",
+  model: "o3-mini",
 });
 
 console.log(chatCompletion.choices[0].message.content);

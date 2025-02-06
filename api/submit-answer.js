@@ -31,14 +31,14 @@ export default async function handler(req, res) {
           ...conversationHistory,
           { role: 'user', content: 'Based on all the answers provided, generate a detailed compatibility assessment. Your response MUST be a valid JSON object and include ONLY the following keys: "compatibilityScore" (a percentage string), "strengths" (an array of strings), and "potentialAreasForGrowth" (an array of strings).' }
         ],
-        model: 'gpt-4o',
+        model: 'o3-mini',
       });
       let assessmentResult;
       try {
         assessmentResult = JSON.parse(chatCompletion.choices[0].message.content);
         if (!assessmentResult.compatibilityScore ||
-            typeof assessmentResult.strengths === 'undefined' ||
-            typeof assessmentResult.potentialAreasForGrowth === 'undefined'
+          typeof assessmentResult.strengths === 'undefined' ||
+          typeof assessmentResult.potentialAreasForGrowth === 'undefined'
         ) {
           throw new Error("Incomplete assessment result");
         }
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
           ...conversationHistory,
           { role: 'user', content: `That was question number ${questionCount}. Please provide the next question.` }
         ],
-        model: 'gpt-4o',
+        model: 'o3-mini',
       });
       const result = extractJSON(chatCompletion.choices[0].message.content);
       if (!result) {
@@ -61,9 +61,9 @@ export default async function handler(req, res) {
       }
       result.questionCount = newQuestionCount;
       conversationHistory.push({ role: 'assistant', content: JSON.stringify(result) });
-      return res.status(200).json({ 
-        ...result, 
-        conversationHistory 
+      return res.status(200).json({
+        ...result,
+        conversationHistory
       });
     }
   } catch (error) {

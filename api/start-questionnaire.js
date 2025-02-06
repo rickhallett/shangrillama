@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   try {
     const chatCompletion = await client.chat.completions.create({
       messages: conversationHistory,
-      model: 'gpt-4o',
+      model: 'o3-mini',
     });
     const result = extractJSON(chatCompletion.choices[0].message.content);
     if (!result) {
@@ -41,10 +41,10 @@ export default async function handler(req, res) {
     }
     questionCount = result.questionCount || 1;
     conversationHistory.push({ role: 'assistant', content: JSON.stringify(result) });
-    return res.status(200).json({ 
-      result, 
-      conversationHistory, 
-      questionCount 
+    return res.status(200).json({
+      result,
+      conversationHistory,
+      questionCount
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
