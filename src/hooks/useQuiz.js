@@ -115,7 +115,7 @@ export function useQuiz(isDevMode = false) {
   }, [state.style, startQuiz]);
 
   const setUserDetails = (details) => {
-    setState(prev => ({ ...prev, userDetails: details }));
+    dispatch({ type: 'SET_USER_DETAILS', payload: details });
   };
 
   const handleAnswer = async (answer) => {
@@ -163,10 +163,12 @@ export function useQuiz(isDevMode = false) {
   };
 
   const setStyle = (style) => {
-    setState(prev => ({ ...prev, style }));
+    dispatch({ type: 'SET_STYLE', payload: style });
   };
 
-  const setTotalQuestions = (value) => setState(prev => ({ ...prev, totalQuestions: value }));
+  const setTotalQuestions = (value) => {
+    dispatch({ type: 'SET_TOTAL_QUESTIONS', payload: value });
+  };
 
   return {
     ...state,
