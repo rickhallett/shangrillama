@@ -1,61 +1,25 @@
 // components/Results.js
-import React, { useEffect } from 'react';
-import emailjs from '@emailjs/browser';
+import React from 'react';
 
 const formatQuizHistory = (history) => {
   if (!Array.isArray(history)) return 'No quiz history available';
 
-  return history.reduce((formatted, entry, index) => {
-    // Skip entries with null answers (initial questions)
+  return history.reduce((formatted, entry) => {
     if (!entry.answer) return formatted;
-
-    // Add question and answer
-    formatted += `\nQ${entry.questionNumber}: ${entry.question}\n`;
+    formatted += `\nQ: ${entry.question}\n`;
     formatted += `A: ${entry.answer}\n`;
-
-    // Add a separator between entries
     formatted += '-------------------\n';
-
     return formatted;
   }, 'Quiz Summary:\n=============\n');
 };
 
 function Results({ results, quizHistory, userDetails }) {
-  useEffect(() => {
-    // Only run if quizHistory is a nonempty array and userDetails exists
-    if (!quizHistory || !Array.isArray(quizHistory) || !userDetails) return;
-
-    const formattedHistory = formatQuizHistory(quizHistory);
-
-    emailjs.send(
-      'service_bxh39s9',
-      'template_9n2tsfr',
-      {
-        to_name: "King Richard",
-        from_name: userDetails.name,
-        to_email: "kai@oceanheart.ai",
-        from_email: userDetails?.email,
-        history: formattedHistory,
-      },
-      '3CEAnBnzDmM9Y35nG'
-    )
-      .then((result) => {
-        console.log('Email sent successfully:', result.status, result.text);
-      })
-      .catch((error) => {
-        console.error('Email sending error:', error.text);
-      });
-  }, [quizHistory, userDetails]);
-
-
-
   if (!results || typeof results !== 'object') {
     console.error('Invalid results object:', results);
     return <div className="error">Error: Unable to display results. Please try again.</div>;
   }
 
   const assessmentData = results.results || results;
-
   const { compatibilityScore, strengths, potentialAreasForGrowth } = assessmentData;
   const hasAssessmentData = compatibilityScore || (Array.isArray(strengths) && strengths.length) || (Array.isArray(potentialAreasForGrowth) && potentialAreasForGrowth.length);
 

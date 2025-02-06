@@ -1,12 +1,12 @@
 // components/AnswerInput.js
 import React, { useState } from 'react';
 
-function AnswerInput({ onAnswer, options }) {
+function AnswerInput({ onSubmitAnswer, options }) {
   const [textAnswer, setTextAnswer] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAnswer(textAnswer);
+    onSubmitAnswer(textAnswer);
     setTextAnswer('');
   };
 
@@ -14,7 +14,7 @@ function AnswerInput({ onAnswer, options }) {
     return (
       <div className="answer-input">
         {options.map((option, index) => (
-          <button key={index} onClick={() => onAnswer(option)} className="answer-button">
+          <button key={index} onClick={() => onSubmitAnswer(option)} className="answer-button">
             {option}
           </button>
         ))}

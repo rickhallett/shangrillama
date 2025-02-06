@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { useQuiz } from '../hooks/useQuiz';
-import fs from 'fs/promises';
+import React, { useState, useContext } from 'react';
+import { QuizContext } from '../context/QuizContext';
 
 function DevMode() {
   if (!localStorage.getItem('shangri-dev-mode')) return null;
 
-  const { setTotalQuestions, setUserDetails } = useQuiz();
+  const { setTotalQuestions, setUserDetails } = useContext(QuizContext);
   const [quizRounds, setQuizRounds] = useState("3");
   const [rawDataMsg, setRawDataMsg] = useState("");
 
@@ -22,36 +21,24 @@ function DevMode() {
   };
 
   const handleSubmitRawData = async () => {
-    const rawDataPath = 'data/raw/raw-data.json';
-    const vectorisedDataPath = 'data/vectorised-data.json';
     try {
-      let rawData;
-      try {
-        const content = await fs.readFile(rawDataPath, 'utf-8');
-        rawData = JSON.parse(content);
-      } catch (err) {
-        rawData = [];
-      }
+      const rawDataRes = await fetch("/api/get-raw-data");
+      const rawData = await rawDataRes.json();
       if (!rawData.length) {
         setRawDataMsg("No raw data available – please run the quiz first.");
         return;
       }
-      const { encodeAndStoreData } = await import('../services/ragieGenerate');
-      const success = await encodeAndStoreData(rawData);
-      if (success) {
-        setRawDataMsg("Data has been submitted");
-        await fs.writeFile(rawDataPath, JSON.stringify([], null, 2));
-        let vectorData;
-        try {
-          const vContent = await fs.readFile(vectorisedDataPath, 'utf-8');
-          vectorData = JSON.parse(vContent);
-        } catch (err) {
-          vectorData = [];
-        }
-        vectorData.push(...rawData);
-        await fs.writeFile(vectorisedDataPath, JSON.stringify(vectorData, null, 2));
+      const encodeRes = await fetch("/api/encode-store-data", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ rawData })
+      });
+      const encodeJson = await encodeRes.json();
+      if (encodeJson.success) {
+         setRawDataMsg("Data has been submitted");
+         await fetch("/api/clear-raw-data", { method: "POST" });
       } else {
-        setRawDataMsg("Data was not submitted");
+         setRawDataMsg("Data was not submitted");
       }
     } catch (err) {
       console.error(err);
